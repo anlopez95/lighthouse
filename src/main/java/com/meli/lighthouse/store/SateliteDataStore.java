@@ -12,8 +12,8 @@ import com.meli.lighthouse.model.SatelitesDTO;
 public class SateliteDataStore {
     private final Map<String, SatelitesDTO> satellites = new HashMap<>();
 
-    public void updateSatelliteData(String name, SatelitesDTO satellite) {
-        satellites.put(name, satellite);
+    public void updateSatelliteData(String name, SatelitesDTO satelite) {
+        satellites.put(name, satelite);
     }
 
     public Collection<SatelitesDTO> getAllSatellites() {

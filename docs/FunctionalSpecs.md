@@ -56,19 +56,19 @@ Antes de comenzar, asegúrate de tener lo siguiente instalado:
 Ejecuta el siguiente comando para iniciar la aplicación:
 
 ```bash
-java -jar target/lighthouse.jar
+java -jar target/light.jar
 ```
-No obstante si presenta problemas puede realizar la ejecución de la aplicación desde un IDE (Eclipse/STS) importando el proyecto maven
- y ejecutando la aplicacion en spring
+
+Reemplaza `tu-aplicacion.jar` con el nombre del archivo JAR generado.
 
 ## Endpoints de la API
 
 A continuación se detallan algunos de los endpoints disponibles:
 
-
-- `POST /topsecret/`: Servicio encargado de obtener el mensaje y posicion de la nave al otro lado de los asteroides
-- `POST /topsecret_split/{satellite_name}`: (SIN FINALIZAR) - Servicio encargado de modificar parametros de satelite
-- `GET /topsecret_split/details`: (SIN FINALIZAR) - Servicio que opera de manera similar al post de topsecret
+- `GET /api/endpoint1`: Descripción del endpoint 1
+- `POST /api/endpoint2`: Descripción del endpoint 2
+- `PUT /api/endpoint3`: Descripción del endpoint 3
+- `DELETE /api/endpoint4`: Descripción del endpoint 4
 
 ## Contribuciones
 

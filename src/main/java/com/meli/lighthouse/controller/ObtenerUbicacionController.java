@@ -15,6 +15,9 @@ import com.meli.lighthouse.model.dtosComplejos.request.ConsultaTopSecretRqDTO;
 import com.meli.lighthouse.model.dtosComplejos.response.ConsultaTopSecretRsDTO;
 import com.meli.lighthouse.service.IPosicionamientoSerive;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @CrossOrigin (origins = "*", methods= { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 @RequestMapping("/topsecret")
@@ -29,6 +32,7 @@ public class ObtenerUbicacionController {
 	 * @return
 	 * @author AFLOPEZ
 	 */
+	@Operation(summary ="Obtener ubicacion de la nave de recursos")
 	@PostMapping("/")
 	public ResponseEntity<ConsultaTopSecretRsDTO> obtenerUbicacion(@RequestBody ConsultaTopSecretRqDTO data) throws ExcepcionNegocio {
 		ConsultaTopSecretRsDTO respuesta = posicionamientoService.GetPosicion(data);
