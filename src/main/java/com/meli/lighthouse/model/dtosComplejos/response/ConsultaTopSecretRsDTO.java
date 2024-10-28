@@ -1,13 +1,8 @@
 package com.meli.lighthouse.model.dtosComplejos.response;
 
-import com.meli.lighthouse.model.SatelitesDTO;
-
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 public class ConsultaTopSecretRsDTO {
 	
 	private Position position;

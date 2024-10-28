@@ -1,5 +1,6 @@
 package com.meli.lighthouse.model.dtosComplejos.request;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,8 +48,11 @@ public class ConsultaTopSecretRqDTO {
 		return false;
 	}
 
+	/**
+	 * Método encargado de validar la integridad de los mensajes
+	 * @return devuelve la validación de conflictos
+	 */
 	public boolean tieneConflictoMensajes() {
-
 		for (SatelitesDTO satelite : satelites) {
 			if (satelite.tieneCamposNulos() || satelite.tieneValoresPorDefecto()) {
 				return true;
@@ -57,6 +61,9 @@ public class ConsultaTopSecretRqDTO {
 		return false;
 	}
 
+	/**
+	 * Método encargado de validar inconsistencias en los mensajes por tamaño y palabras
+	 */
 	public void tieneMensajesInconsistencias() {
 
 		// Longitud esperada del mensaje, tomada del primer satélite
@@ -84,11 +91,23 @@ public class ConsultaTopSecretRqDTO {
 
 			// Si hay más de una palabra en el mismo índice, lanza una excepción
 			if (palabras.size() > 1) {
-				String myStr = Constantes.MENSAJE_PALABRAS_DUPLICIDAD;
-				String result = String.format(myStr, i, palabras);
+				String result = String.format(Constantes.MENSAJE_PALABRAS_DUPLICIDAD, i, palabras);
 				throw new ExcepcionNegocio(result, HttpStatus.BAD_REQUEST);
 			}
 
+		}
+	}
+	
+	/**
+	 * Método encargado del paso de BigDecimal entrante a double
+	 */
+	public void convertirDataBigToDouble() {
+		for (SatelitesDTO satelite : satelites) {
+			if (satelite.getDistancia() == null || satelite.getDistancia().signum() <= 0 ) {
+				throw new ExcepcionNegocio(Constantes.DISTANCIA_NULA_CERO+satelite.getName(), HttpStatus.BAD_REQUEST);
+			} else {
+				satelite.convertBigToDoub(satelite.getDistancia());
+			}
 		}
 	}
 

@@ -25,7 +25,9 @@ public class Constantes {
 	
 	/** Mensaje de la aplicacion **/
 	public static final String DISTINTA_LONGITUD_MENSAJES="Todos los mensajes deben tener la misma longitud.";
-	
+	/** Mensaje de la aplicacion **/
 	public static final String MENSAJE_PALABRAS_DUPLICIDAD="Inconsistencia en el mensaje en la posición %d . Palabras encontradas: %s";
+	/** Mensaje de la aplicacion **/
+	public static final String DISTANCIA_NULA_CERO="La distancia viene nula o con un valor menor a 0 para el satelite ";
 
 }

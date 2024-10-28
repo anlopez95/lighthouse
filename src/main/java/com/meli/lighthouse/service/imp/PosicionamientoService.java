@@ -28,6 +28,9 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 	public ConsultaTopSecretRsDTO GetPosicion(ConsultaTopSecretRqDTO datos) throws ExcepcionNegocio {
 		
 		ConsultaTopSecretRsDTO response = new ConsultaTopSecretRsDTO();
+		
+		datos.convertirDataBigToDouble();
+		
 		List<SatelitesDTO> listaSatelites = datos.getSatelites();
 		//Validaciones iniciales de parametros
 		if ( datos.getSatelites().size()< Constantes.NUMERO_MINIMO_SATELITES) {
