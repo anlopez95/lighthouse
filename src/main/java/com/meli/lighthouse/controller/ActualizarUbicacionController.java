@@ -61,8 +61,8 @@ public class ActualizarUbicacionController {
 
         // Calcula la posición y el mensaje
         List<SatelitesDTO> satelitesList = new ArrayList<>(satellites);
-        Point position = posicionamientoService.posicion(satelitesList);
-        String message = posicionamientoService.getMensaje(satelitesList);
+        Point position = posicionamientoService.GetLocation(satelitesList);
+        String message = posicionamientoService.getMessage(satelitesList);
 
         if (position == null || message == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
