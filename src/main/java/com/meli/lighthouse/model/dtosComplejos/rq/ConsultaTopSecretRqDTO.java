@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+@Data
 public class ConsultaTopSecretRqDTO {
 	
 	/**
@@ -24,14 +25,6 @@ public class ConsultaTopSecretRqDTO {
     public String[][] getMessages() {
         return satelites.stream().map(SatelitesDTO::getMessage).toArray(String[][]::new);
     }
-
-	public List<SatelitesDTO> getSatelites() {
-		return satelites;
-	}
-
-	public void setSatelites(List<SatelitesDTO> satelites) {
-		this.satelites = satelites;
-	}
     
     
 

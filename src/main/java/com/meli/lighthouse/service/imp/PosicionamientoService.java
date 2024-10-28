@@ -32,11 +32,17 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 	public GenericoDataRsDTO<ConsultaTopSecretRsDTO> GetPosicion(ConsultaTopSecretRqDTO datos) {
 		
 		GenericoDataRsDTO<ConsultaTopSecretRsDTO> resultadoFinal = new GenericoDataRsDTO<>();
+		
+		//Validaciones iniciales de parametros
 		if (datos.getSatelites().size()<3) {
-			resultadoFinal.setRespuesta(Boolean.FALSE, "ERR", "Datos para satelites insuficientes");
+			resultadoFinal.setRespuesta(Boolean.FALSE, Constantes.TIPO_MENSAJE_ERROR, Constantes.DATOS_INSUFICIENTES);
 			return resultadoFinal;
 		}
-
+		if(!validarParametrosSatelites(datos.getSatelites())) {
+			resultadoFinal.setRespuesta(Boolean.FALSE, Constantes.TIPO_MENSAJE_ERROR, Constantes.INFORMACION_SATELITES_INCOMPLETA);
+			return resultadoFinal;
+		}
+	
 		// Calculamos la posición
 		Point location = posicion(datos.getSatelites());
 
@@ -45,9 +51,8 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 
 		// Si no podemos determinar la posición o el mensaje completo
 		if (location == null || message.isEmpty()) {
-			resultadoFinal.setRespuesta(Boolean.FALSE, "ERR", "No se pudo determinar la posición o el mensaje.");
+			resultadoFinal.setRespuesta(Boolean.FALSE, Constantes.TIPO_MENSAJE_ERROR, Constantes.ERROR_DETERMINAR_POSICION_MENSAJE);
 			return resultadoFinal;
-
 		}
 
 		ConsultaTopSecretRsDTO response = new ConsultaTopSecretRsDTO(location.x, location.y, message);
@@ -59,7 +64,12 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 
 	}
 
-	public Point posicion(List<SatelitesDTO> satelites) {
+	/**
+	 * Método encargado de obtener la posición por triangulación
+	 * @param satelites : Informacion en forma de lista de los satelites
+	 * @return Devuelve la posicion encontrada usando los 3 satelites
+	 */
+	private Point posicion(List<SatelitesDTO> satelites) {
 		//Posiciones originales de cada satelite
 		Point2D.Double p1 = new Point2D.Double(-500, -200); //Satelite Kenobi
         Point2D.Double p2 = new Point2D.Double(100, -100); //Satelite Skywalker
@@ -71,6 +81,7 @@ public class PosicionamientoService implements IPosicionamientoSerive {
         double r3 = satelites.get(2).getDistance();
         
 		// Calculamos (x, y) resolviendo el sistema de ecuaciones de trilateracion (Calculo de posicion usando geometria de triangulos)
+        // Formula de ejemplo: (x−x1)^2+(y−y1)^2 = d^2
         double A = 2 * p2.x - 2 * p1.x;
         double B = 2 * p2.y - 2 * p1.y;
         double C = Math.pow(r1, 2) - Math.pow(r2, 2) - Math.pow(p1.x, 2) + Math.pow(p2.x, 2) - Math.pow(p1.y, 2) + Math.pow(p2.y, 2);
@@ -84,7 +95,12 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 		return new Point((int) x, (int) y);
 	}
 
-	public String getMensaje(List<SatelitesDTO> satelites) {
+	/**
+	 * Método encargado de obtener el mensaje enviado
+	 * @param satelites : Informacion en forma de lista de los satelites
+	 * @return Devuelve el mensaje obtenido
+	 */
+	private String getMensaje(List<SatelitesDTO> satelites) {
 	    int maxLength = satelites.stream()
 	                              .map(satellite -> satellite.getMessage().length)
 	                              .max(Integer::compare)
@@ -103,5 +119,24 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 
 	    return String.join(" ", message).trim();
 	}
+	
+	/**
+	 * Método encargado de validar los parametros enviados para cada uno de los satelites
+	 * @param listaSatelites : Informacion en forma de lista de los satelites
+	 * @return Devuelve el resultado de la validación
+	 */
+	private boolean validarParametrosSatelites(List<SatelitesDTO> listaSatelites) {
+        for (SatelitesDTO satelite : listaSatelites) {
+            if (satelite.getName() == null || satelite.getDistance() == 0 || satelite.getMessage() == null) {
+                return false;
+            }
+            for (String message : satelite.getMessage()) {
+                if (message == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 }

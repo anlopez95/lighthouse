@@ -3,8 +3,11 @@ package com.meli.lighthouse.model.dtosComplejos.rs;
 import com.meli.lighthouse.model.SatelitesDTO;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-
+@Getter
+@Setter
 public class ConsultaTopSecretRsDTO {
 	
 	private Position position;
@@ -43,23 +46,5 @@ public class ConsultaTopSecretRsDTO {
 
         
     }
-
-	public Position getPosition() {
-		return position;
-	}
-
-	public void setPosition(Position position) {
-		this.position = position;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-    
 
 }

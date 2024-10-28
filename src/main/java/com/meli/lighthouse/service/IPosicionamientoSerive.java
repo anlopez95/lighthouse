@@ -11,7 +11,6 @@ public interface IPosicionamientoSerive {
 	 * @param data : Datos de los satelites
 	 * @return Posicion del objivo
 	 */
-	public GenericoDataRsDTO<ConsultaTopSecretRsDTO> GetPosicion(ConsultaTopSecretRqDTO data);
-	
+	public GenericoDataRsDTO<ConsultaTopSecretRsDTO> GetPosicion(ConsultaTopSecretRqDTO data);	
 
 }
