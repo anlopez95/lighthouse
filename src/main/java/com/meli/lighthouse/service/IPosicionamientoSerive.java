@@ -22,13 +22,13 @@ public interface IPosicionamientoSerive {
 	 * @param satelites : Informacion en forma de lista de los satelites
 	 * @return Devuelve la posicion encontrada usando los 3 satelites
 	 */
-	public Point posicion(List<SatelitesDTO> satelites);
+	public Point GetLocation(List<SatelitesDTO> satelites);
 
 	/**
 	 * Método encargado de obtener el mensaje enviado
 	 * @param satelites : Informacion en forma de lista de los satelites
 	 * @return Devuelve el mensaje obtenido
 	 */
-	public String getMensaje(List<SatelitesDTO> satelites);	
+	public String getMessage(List<SatelitesDTO> satelites);	
 
 }

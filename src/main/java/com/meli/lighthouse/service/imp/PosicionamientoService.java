@@ -57,10 +57,10 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 		datos.tieneMensajesInconsistencias();
 
 		// Calculamos la posición
-		Point location = posicion(datos.getSatelites());
+		Point location = GetLocation(datos.getSatelites());
 
 		// Reconstruimos el mensaje
-		String message = getMensaje(datos.getSatelites());
+		String message = getMessage(datos.getSatelites());
 
 		// Si no podemos determinar la posición o el mensaje completo
 		if (location == null || message.isEmpty()) {
@@ -77,7 +77,7 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Point posicion(List<SatelitesDTO> satelites) {
+	public Point GetLocation(List<SatelitesDTO> satelites) {
 		// Posiciones originales de cada satelite
 		Point2D.Double p1 = new Point2D.Double(-500, -200); // Satelite Kenobi
 		Point2D.Double p2 = new Point2D.Double(100, -100); // Satelite Skywalker
@@ -95,7 +95,7 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getMensaje(List<SatelitesDTO> satelites) {
+	public String getMessage(List<SatelitesDTO> satelites) {
 		int maxLength = satelites.stream().map(satellite -> satellite.getMessage().length).max(Integer::compare)
 				.orElse(0);
 
