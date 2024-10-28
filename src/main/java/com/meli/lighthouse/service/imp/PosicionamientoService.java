@@ -5,15 +5,15 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.meli.lighthouse.exception.ExcepcionNegocio;
 import com.meli.lighthouse.model.SatelitesDTO;
-import com.meli.lighthouse.model.dtosComplejos.rq.ConsultaTopSecretRqDTO;
-import com.meli.lighthouse.model.dtosComplejos.rs.ConsultaTopSecretRsDTO;
-import com.meli.lighthouse.model.dtosComplejos.rs.GenericoDataRsDTO;
+import com.meli.lighthouse.model.dtosComplejos.request.ConsultaTopSecretRqDTO;
+import com.meli.lighthouse.model.dtosComplejos.response.ConsultaTopSecretRsDTO;
 import com.meli.lighthouse.service.IPosicionamientoSerive;
 import com.meli.lighthouse.utils.Constantes;
+import com.meli.lighthouse.utils.Triangulacion;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -21,27 +21,29 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class PosicionamientoService implements IPosicionamientoSerive {
 
-	private Point sateliteKenobi = new Point(-500, -200);
-	private Point sateliteSkywalker = new Point(100, -100);
-	private Point sateliteSato = new Point(500, 100);
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public GenericoDataRsDTO<ConsultaTopSecretRsDTO> GetPosicion(ConsultaTopSecretRqDTO datos) {
+	public ConsultaTopSecretRsDTO GetPosicion(ConsultaTopSecretRqDTO datos) throws ExcepcionNegocio {
 		
-		GenericoDataRsDTO<ConsultaTopSecretRsDTO> resultadoFinal = new GenericoDataRsDTO<>();
-		
+		ConsultaTopSecretRsDTO response = new ConsultaTopSecretRsDTO();
+		List<SatelitesDTO> listaSatelites = datos.getSatelites();
 		//Validaciones iniciales de parametros
-		if (datos.getSatelites().size()<3) {
-			resultadoFinal.setRespuesta(Boolean.FALSE, Constantes.TIPO_MENSAJE_ERROR, Constantes.DATOS_INSUFICIENTES);
-			return resultadoFinal;
+		if ( datos.getSatelites().size()< Constantes.NUMERO_MINIMO_SATELITES) {
+			throw new ExcepcionNegocio(Constantes.DATOS_INSUFICIENTES, HttpStatus.NOT_FOUND);
 		}
+		
+		if(datos.tieneSatelitesNulos()) {
+			throw new ExcepcionNegocio(Constantes.DATOS_NULOS, HttpStatus.BAD_REQUEST);
+		}		
+		
 		if(!validarParametrosSatelites(datos.getSatelites())) {
-			resultadoFinal.setRespuesta(Boolean.FALSE, Constantes.TIPO_MENSAJE_ERROR, Constantes.INFORMACION_SATELITES_INCOMPLETA);
-			return resultadoFinal;
+			throw new ExcepcionNegocio(Constantes.INFORMACION_SATELITES_INCOMPLETA, HttpStatus.BAD_REQUEST);
 		}
+		
+		//Validar mensajes longitud y data
+		datos.tieneMensajesInconsistencias();
 	
 		// Calculamos la posición
 		Point location = posicion(datos.getSatelites());
@@ -51,19 +53,17 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 
 		// Si no podemos determinar la posición o el mensaje completo
 		if (location == null || message.isEmpty()) {
-			resultadoFinal.setRespuesta(Boolean.FALSE, Constantes.TIPO_MENSAJE_ERROR, Constantes.ERROR_DETERMINAR_POSICION_MENSAJE);
-			return resultadoFinal;
+			throw new ExcepcionNegocio(Constantes.ERROR_DETERMINAR_POSICION_MENSAJE, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		ConsultaTopSecretRsDTO response = new ConsultaTopSecretRsDTO(location.x, location.y, message);
+		response = new ConsultaTopSecretRsDTO(location.x, location.y, message);
 		
-		resultadoFinal.setDatoGenerico(response);
-		resultadoFinal.setRespuesta(Boolean.TRUE, Constantes.CADENA_VACIA, Constantes.CADENA_VACIA);
 		
-		return resultadoFinal;
+		return response;
 
 	}
-
+	
+	
 	/**
 	 * Método encargado de obtener la posición por triangulación
 	 * @param satelites : Informacion en forma de lista de los satelites
@@ -78,21 +78,9 @@ public class PosicionamientoService implements IPosicionamientoSerive {
         //Distancias de cada satelite a la nave
         double r1 = satelites.get(0).getDistance();
         double r2 = satelites.get(1).getDistance();
-        double r3 = satelites.get(2).getDistance();
-        
-		// Calculamos (x, y) resolviendo el sistema de ecuaciones de trilateracion (Calculo de posicion usando geometria de triangulos)
-        // Formula de ejemplo: (x−x1)^2+(y−y1)^2 = d^2
-        double A = 2 * p2.x - 2 * p1.x;
-        double B = 2 * p2.y - 2 * p1.y;
-        double C = Math.pow(r1, 2) - Math.pow(r2, 2) - Math.pow(p1.x, 2) + Math.pow(p2.x, 2) - Math.pow(p1.y, 2) + Math.pow(p2.y, 2);
-        double D = 2 * p3.x - 2 * p2.x;
-        double E = 2 * p3.y - 2 * p2.y;
-        double F = Math.pow(r2, 2) - Math.pow(r3, 2) - Math.pow(p2.x, 2) + Math.pow(p3.x, 2) - Math.pow(p2.y, 2) + Math.pow(p3.y, 2);
-
-        double x = (C * E - F * B) / (E * A - B * D);
-        double y = (C * D - A * F) / (B * D - A * E);
-
-		return new Point((int) x, (int) y);
+        double r3 = satelites.get(2).getDistance();        
+		
+		return Triangulacion.trilateracion(p1, p2, p3, r1, r2, r3);
 	}
 
 	/**
@@ -127,9 +115,6 @@ public class PosicionamientoService implements IPosicionamientoSerive {
 	 */
 	private boolean validarParametrosSatelites(List<SatelitesDTO> listaSatelites) {
         for (SatelitesDTO satelite : listaSatelites) {
-            if (satelite.getName() == null || satelite.getDistance() == 0 || satelite.getMessage() == null) {
-                return false;
-            }
             for (String message : satelite.getMessage()) {
                 if (message == null) {
                     return false;

@@ -1,4 +1,4 @@
-package com.meli.lighthouse.model.dtosComplejos.rs;
+package com.meli.lighthouse.model.dtosComplejos.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

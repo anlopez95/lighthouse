@@ -1,4 +1,4 @@
-package com.meli.lighthouse.model.dtosComplejos.rs;
+package com.meli.lighthouse.model.dtosComplejos.response;
 
 import com.meli.lighthouse.model.SatelitesDTO;
 
@@ -18,7 +18,10 @@ public class ConsultaTopSecretRsDTO {
         this.message = message;
     }
 
-    // Clase anidada para representar la posición
+    public ConsultaTopSecretRsDTO() {
+	}
+
+	// Clase anidada para representar la posición
     public static class Position {
         private double x;
         private double y;

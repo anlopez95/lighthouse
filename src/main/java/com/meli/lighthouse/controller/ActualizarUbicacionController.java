@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.meli.lighthouse.model.SatelitesDTO;
-import com.meli.lighthouse.model.dtosComplejos.rq.ConsultaTopSecretRqDTO;
-import com.meli.lighthouse.model.dtosComplejos.rs.ConsultaTopSecretRsDTO;
-import com.meli.lighthouse.model.dtosComplejos.rs.GenericoDataRsDTO;
+import com.meli.lighthouse.model.dtosComplejos.request.ConsultaTopSecretRqDTO;
+import com.meli.lighthouse.model.dtosComplejos.response.ConsultaTopSecretRsDTO;
+import com.meli.lighthouse.model.dtosComplejos.response.GenericoDataRsDTO;
 import com.meli.lighthouse.service.IPosicionamientoSerive;
 import com.meli.lighthouse.store.SateliteDataStore;
 import com.meli.lighthouse.utils.Constantes;
